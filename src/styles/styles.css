@@ -1,0 +1,10 @@
+.error{
+    color: brown;
+}
+
+.links{
+    text-decoration: none;
+}
+.logout{
+    cursor: pointer;
+}
