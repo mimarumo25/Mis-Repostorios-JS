@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { favorites } from "../actions/favoritesActions";
 import { listar } from "../actions/listarRepoAction";
 import { logout } from "../actions/loginAction";
 import { useForm } from "../hooks/useForm";
@@ -24,13 +25,13 @@ export default function Menu() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    const searchRepos = repositorios.filter(
-      (r) => r.name.toLowerCase().includes(search.toLowerCase())
+    const searchRepos = repositorios.filter((r) =>
+      r.name.toLowerCase().includes(search.toLowerCase())
     );
-    setData(repositorios)
-    if (searchRepos.length > 0) {
-      dispatch(listar(searchRepos));
-    }
+    setData(searchRepos);
+  };
+  const handlefavorites = (repo) => {
+    dispatch(favorites(repo));
   };
   return (
     <div className="mt-3">
@@ -72,9 +73,15 @@ export default function Menu() {
                 value={search}
                 onChange={handleInputChange}
               />
-              <button className="btn btn-outline-success" type="submit">
+              <button
+                className="btn btn-outline-success"
+                type="submit"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+              >
                 Search
               </button>
+
               <div>
                 <ul className="navbar-nav mb-2 mb-lg-0">
                   <li className="nav-item">
@@ -88,6 +95,56 @@ export default function Menu() {
           </div>
         </div>
       </nav>
+
+      <div
+        className="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">
+               Resultado de su Busqueda
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+            {data.length > 0 ? (
+            data.map((r, i) => (
+              <div className="d-flex justify-content-between" key={i}>
+                <li className="list-group-item my-2">{r.name}</li>
+                <button
+                  className="mx-3 btn btn-primary my-2"
+                  onClick={() => handlefavorites(r)}
+                >
+                  Add Favorites
+                </button>
+              </div>
+            ))
+          ) : (
+            <p>No results for your search</p>
+          )}
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
